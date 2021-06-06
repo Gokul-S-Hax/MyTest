@@ -9,16 +9,18 @@ int diffusion(const int n_particles,
               const float alpha, 
               VSLStreamStatePtr rnStream) {
   int n_escaped=0;
-  float rn[n_particles],locParticle[n_particles] = {0};
-  vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD,rnStream, n_particles, rn, -1.0, 1.0);
+  float positions[n_particles];
   for (int i = 0; i < n_steps; i++) {
-	  #pragma omp simd reduction(+: locParticle)
+    float x = 0.0f;
+	float rn[n_particles];
+	vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD,rnStream, n_particles, rn, -1.0, 1.0);
+	#pragma omp simd reduction(+: positions)
     for (int j = 0; j < n_particles; j++) {
-      locParticle[j] += dist_func(alpha, rn[j]);
+		if(i == 0)positions[j] = 0;
+      positions[j] += dist_func(alpha, rn[j]); 
+	  if(i == n_steps - 1)
+		if(positions[j]>x_threshold)n_escaped++;
     }
   }
-  for (int j = 0; j < n_particles; j++) {
-      if (locParticle[j] > x_threshold) n_escaped++;
-   }
-  return n_escaped;
+  return n_escaped; 
 }
