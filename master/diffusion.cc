@@ -14,7 +14,6 @@ int diffusion(const int n_particles,
     float x = 0.0f;
 	float rn[n_particles];
 	vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD,rnStream, n_particles, rn, -1.0, 1.0);
-	#pragma omp simd reduction(+: positions)
     for (int j = 0; j < n_particles; j++) {
 		if(i == 0)positions[j] = 0;
       positions[j] += dist_func(alpha, rn[j]); 
