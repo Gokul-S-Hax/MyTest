@@ -2,7 +2,7 @@
 #include "distribution.h"
 
 
-//vectorize this function based on instruction on the lab page
+#pragma omp declare simd
 int diffusion(const int n_particles, 
               const int n_steps, 
               const float x_threshold,
